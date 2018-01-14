@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" lang="hu" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>OTP Napi USD - HUF deviza vételi árfolyam</title>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
+  <!-- use the font -->
+  <style>
+        body {
+          font-family: 'Source Sans Pro', sans-serif;
+          font-size: 30px;
+          text-align:center;
+        }
+
+        .content {
+          width:700px;
+          margin:0 auto;
+          text-align:left;
+          padding:15px;
+          border:0px;
+          background-color:#fff;
+        }
+
+        .mher-title {
+          display: block;
+          font-size: 42px;
+          font-weight: 600;
+          line-height: 1.095;
+          margin: 0;
+          max-width: 577px;
+          padding: 12px 20px;
+          position: relative;
+          z-index: 1;
+         float: left;
+        }
+
+        .exchange-graph-form {
+          text-align: center;
+          max-width: 5500px;
+          background: #f0f0f0;
+          border: solid 1px #c5c5c5;
+          border-radius: 4px;
+          padding: 25px 25px 15px 25px;
+          margin-top: 20px;
+        }
+
+        .arrows {
+        }
+
+
+  </style>
+</head>
+
+<body style="margin: 0; padding: 0;">
+<div class="content">
+  <a href="https://www.otpbank.hu/portal/hu/Arfolyamok/OTP">
+    <img src="https://www.otpbank.hu/static/portal/sw/pic/OTPlogo_history_6.jpg"/>
+  </a>
+
+  <div class="exchange-graph-form">
+    <span class="mher-title" th:text="${latestExchangeData?.resultAmount}">1</span> HUF
+      <div class="arrows">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="green"><path d="M12 3l12 18h-24z"/></svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="red"><path d="M12 21l-12-18h24z"/></svg>
+      </div>
+
+    <p>(<span th:text="${previousExchangeData?.resultAmount}">10</span> HUF -
+      <!--<span th:text="${#calendars.format(previousExchangeData?.exchangeRateDate,'dd MMMM yyyy')}">1 AUG 2017</span>)-->
+      <span th:text="${previousExchangeData?.exchangeRateDate}">1 AUG 2017</span>)
+    </p>
+  </div>
+</div>
+
+</body>
+</html>
