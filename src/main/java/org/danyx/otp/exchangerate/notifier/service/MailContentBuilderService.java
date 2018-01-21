@@ -1,21 +1,21 @@
 package org.danyx.otp.exchangerate.notifier.service;
 
 import lombok.RequiredArgsConstructor;
-import org.danyx.otp.exchangerate.notifier.domain.MailContent;
+import org.danyx.otp.exchangerate.notifier.domain.MessageContent;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 @Service
 @RequiredArgsConstructor
-public class MailContentBuilder {
+public class MailContentBuilderService {
 
   private final TemplateEngine templateEngine;
 
-  public String build(MailContent mailContent) {
+  public String build(MessageContent messageContent) {
     Context context = new Context();
-    context.setVariables(mailContent.getVariables());
+    context.setVariables(messageContent.getVariables());
 
-    return templateEngine.process(mailContent.getTemplateName(), context);
+    return templateEngine.process(messageContent.getTemplateName(), context);
   }
 }

@@ -3,9 +3,10 @@ package org.danyx.otp.exchangerate.notifier.scheduler.task;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.danyx.otp.exchangerate.notifier.domain.ExchangeResponse;
-import org.danyx.otp.exchangerate.notifier.domain.MailContent;
+import org.danyx.otp.exchangerate.notifier.domain.MessageContent;
 import org.danyx.otp.exchangerate.notifier.service.EmailService;
 import org.danyx.otp.exchangerate.notifier.service.OTPService;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class FetchOTPDataTask {
 
@@ -22,16 +24,10 @@ public class FetchOTPDataTask {
   @Value("${scheduledJob.enabled:false}")
   private boolean scheduledJobEnabled;
 
-  public FetchOTPDataTask(EmailService emailService, OTPService otpService) {
-    this.emailService = emailService;
-    this.otpService = otpService;
-  }
-
   /**
    * runs at 8am, 12pm and 16pm of every workday of a week
    */
-  //@Scheduled(cron = "0 0 */3 * * MON-FRI")
-  @Scheduled(fixedRate = 10000)
+  @Scheduled(cron = "0 0 */3 * * MON-FRI")
   public void runScheduled() {
     if (!scheduledJobEnabled) {
       log.debug("Fetch OTP data is disable, quitting from the process...");
@@ -46,7 +42,7 @@ public class FetchOTPDataTask {
     log.debug("Scheduled job successfully finished");
   }
 
-  public MailContent prepareOTPNotificationMailContent() {
+  public MessageContent prepareOTPNotificationMailContent() {
     ExchangeResponse latest = null;
     ExchangeResponse previous = null;
 
@@ -56,8 +52,7 @@ public class FetchOTPDataTask {
 
       latest = previousExchangeResponses.get(0);
       previous = previousExchangeResponses.get(1);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       log.error("An error occurred during fetching the latest exchange rates!", e);
 
       latest = previous = new ExchangeResponse();
@@ -71,6 +66,6 @@ public class FetchOTPDataTask {
     variables.put("latestExchangeData", latest);
     variables.put("previousExchangeData", previous);
 
-    return new MailContent("mailTemplate", variables);
+    return new MessageContent("mailTemplate", variables);
   }
 }

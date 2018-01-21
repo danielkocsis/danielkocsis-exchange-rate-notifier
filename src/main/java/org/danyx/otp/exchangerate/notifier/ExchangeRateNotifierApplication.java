@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class ExchangeRateNotifierApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ExchangeRateNotifierApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(ExchangeRateNotifierApplication.class, args);
+  }
 }

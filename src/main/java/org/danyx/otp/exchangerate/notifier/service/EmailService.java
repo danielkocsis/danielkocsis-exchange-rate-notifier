@@ -4,12 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.danyx.otp.exchangerate.notifier.domain.MailContent;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.danyx.otp.exchangerate.notifier.domain.MessageContent;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -21,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
   private final JavaMailSender mailSender;
-  private final MailContentBuilder mailContentBuilder;
+  private final MailContentBuilderService mailContentBuilderService;
 
   @Value("${mail.notification.to}")
   private String[] to;
@@ -32,22 +29,22 @@ public class EmailService {
   @Value("${mail.notification.enabled:false}")
   private boolean notificationEnabled;
 
-  public void sendNotification(Supplier<MailContent> mailContentSupplier) {
+  public void sendNotification(Supplier<MessageContent> messageContentSupplier) {
     if (!notificationEnabled) {
-      log.debug("Email notifications are disabled! Skipping to send notification to " + to);
+      log.debug("Email notifications are disabled!");
 
       return;
     }
 
     MimeMessagePreparator messagePreparator = mimeMessage -> {
       MimeMessageHelper messageHelper = new MimeMessageHelper(
-          mimeMessage,MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+          mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
           StandardCharsets.UTF_8.name());
 
       messageHelper.setFrom(from);
       messageHelper.setTo(to);
       messageHelper.setSubject(subject);
-      messageHelper.setText(mailContentBuilder.build(mailContentSupplier.get()), true);
+      messageHelper.setText(mailContentBuilderService.build(messageContentSupplier.get()), true);
     };
 
     try {

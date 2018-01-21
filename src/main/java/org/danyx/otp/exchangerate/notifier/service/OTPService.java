@@ -14,6 +14,7 @@ import org.danyx.otp.exchangerate.notifier.domain.ExchangeRequest;
 import org.danyx.otp.exchangerate.notifier.domain.ExchangeRequest.ExchangeType;
 import org.danyx.otp.exchangerate.notifier.domain.ExchangeResponse;
 import org.danyx.otp.exchangerate.notifier.repository.ExchangeRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class OTPService {
 
-  private static final String EXCHANGE_API_BASE_URL =
-      "https://www.otpbank.hu/apps/exchangerate/api/exchangerate";
-
   private final WebClient webClient;
   private final ExchangeRepository exchangeRepository;
   private final Gson gson = new Gson();
@@ -36,13 +34,14 @@ public class OTPService {
 
   private final String EXCHANGE_SERVICE = "/exchange";
   private final String CURRENCIES_SERVICE = "/currencies";
-  private final String CHART_SERVICE = "/chart";
 
-  public OTPService(ExchangeRepository exchangeRepository) {
+  public OTPService(
+      ExchangeRepository exchangeRepository, @Value("${otp.api.base.url}") String otpApiBaseURL) {
+
     this.exchangeRepository = exchangeRepository;
 
     webClient = WebClient.builder()
-        .baseUrl(EXCHANGE_API_BASE_URL)
+        .baseUrl(otpApiBaseURL)
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE)
         .build();
@@ -67,9 +66,6 @@ public class OTPService {
         .collect(Collectors.toList());
   }
 
-  /**
-   * napi tobb version mindenhez
-   */
   public List<?> getAllOTPRates(LocalDate date) {
     RequestHeadersSpec<?> request =
         webClient
